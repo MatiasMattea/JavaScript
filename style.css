@@ -1,0 +1,8 @@
+body {
+    background-color: rgba(255, 208, 0, 0.527);
+ }
+
+.titulotexto{
+    font-size: 15px;
+    text-transform: uppercase;
+}

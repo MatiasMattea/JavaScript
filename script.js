@@ -1,217 +1,185 @@
-console.log("=== SISTEMA DE CONTROL DE MANTENIMIENTO ===");
-console.log("Escriba 'salir' en cualquier momento para cancelar la operación actual");
-mostrarMenu();
 
-let vehiculos = [];
+class SistemaMantenimiento {
+    constructor() {
+        this.vehiculos = this.cargarDatos() || [];
+        this.iniciarEventos();
+        this.actualizarVista();
+        console.log("✅ Sistema iniciado - Evolución del proyecto de consola");
+    }
 
-function mostrarMenu() {
-    let opcion;
-    do {
-        opcion = prompt(`=== CONTROL DE MANTENIMIENTO BOMBEROS ===
+    
+    guardarDatos() {
+        localStorage.setItem('vehiculosBomberos', JSON.stringify(this.vehiculos));
+    }
+
+    cargarDatos() {
+        const datos = localStorage.getItem('vehiculosBomberos');
+        return datos ? JSON.parse(datos) : null;
+    }
+
+    
+    iniciarEventos() {
+        document.getElementById('vehiculoForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.agregarVehiculo();
+        });
+
+        document.getElementById('btnVerResumen').addEventListener('click', () => {
+            this.mostrarResumen();
+        });
+
+        document.getElementById('btnLimpiarTodo').addEventListener('click', () => {
+            this.limpiarDatos();
+        });
+    }
+
+    
+    agregarVehiculo() {
+        const numero = document.getElementById('numeroUnidad').value;
+        const tipo = document.getElementById('tipoVehiculo').value;
+        const agua = document.getElementById('nivelAgua').value;
+        const aceite = document.getElementById('nivelAceite').value;
+        const luces = document.getElementById('estadoLuces').value;
+        const novedades = document.getElementById('novedades').value || 'Sin novedades';
+
         
-1. Agregar vehículos
-2. Ver resumen de estado
-3. Salir
-
-Seleccione una opción (o escriba 'salir' en cualquier momento):`);
-
-        if (opcion && normalizarTexto(opcion) === "salir") {
-            alert("Gracias por tu Servicio");
+        if (!numero) {
+            this.mostrarMensaje('El número de unidad es obligatorio', 'error');
             return;
         }
 
-        switch(opcion) {
-            case "1":
-                agregarVehiculos();
-                break;
-            case "2":
-                verResumenEstado();
-                break;
-            case "3":
-                alert("Gracias por tu Servicio");
-                break;
-            default:
-                if (opcion !== null) {
-                    alert("Opción no válida.");
-                }
-        }
-    } while(opcion !== "3" && opcion !== null);
-}
-
-function normalizarTexto(texto) {
-    if (!texto) return "";
-    return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-}
-
-function agregarVehiculos() {
-    const cantidadvehiculos = prompt("¿Cuántas unidades desea agregar? (o escriba 'salir' para cancelar)");
-    
-    // salir
-    if (cantidadvehiculos && normalizarTexto(cantidadvehiculos) === "salir") {
-        console.log("Operación cancelada");
-        return;
-    }
-    
-    const cantidad = parseInt(cantidadvehiculos);
-    
-    if (isNaN(cantidad) || cantidad <= 0) {
-        alert("Debe ingresar un número válido.");
-        return;
-    }
-    
-    for (let i = 0; i < cantidad; i++) {
-        const cancelado = agregarUnVehiculo();
         
-        if (cancelado) {
-            console.log("Operación cancelada.");
-            break;
+        if (this.vehiculos.find(v => v.numero === numero)) {
+            this.mostrarMensaje(`Ya existe un vehículo con el número ${numero}`, 'error');
+            return;
+        }
+
+        
+        const vehiculo = {
+            numero: numero,
+            tipo: tipo,
+            agua: agua,
+            aceite: aceite,
+            luces: luces,
+            novedades: novedades,
+            fecha: new Date().toLocaleString(),
+            
+            optimo: (agua === "Óptimo" && aceite === "Óptimo" && luces === "Funcionan")
+        };
+
+        this.vehiculos.push(vehiculo);
+        this.guardarDatos();
+        this.actualizarVista();
+        
+        
+        document.getElementById('vehiculoForm').reset();
+        
+        
+        if (agua === "Bajo" || aceite === "Bajo" || luces === "No funcionan") {
+            this.mostrarMensaje(
+                `¡ATENCIÓN! Unidad ${numero} necesita mantenimiento URGENTE. Se recomienda NO UTILIZAR`, 
+                'urgente'
+            );
+        } else {
+            this.mostrarMensaje(`Vehículo ${numero} agregado correctamente`, 'success');
         }
     }
+
     
-    if (cantidad > 0) {
-        alert(`Se agregaron ${cantidad} vehículos correctamente.`);
+    actualizarVista() {
+        this.actualizarEstadisticas();
+        this.actualizarLista();
+    }
+
+    actualizarEstadisticas() {
+        const total = this.vehiculos.length;
+        const optimos = this.vehiculos.filter(v => v.optimo).length;
+        const problemas = total - optimos;
+
+        document.getElementById('totalVehiculos').textContent = total;
+        document.getElementById('vehiculosOptimos').textContent = optimos;
+        document.getElementById('vehiculosProblemas').textContent = problemas;
+    }
+
+    actualizarLista() {
+        const lista = document.getElementById('listaVehiculos');
+        
+        if (this.vehiculos.length === 0) {
+            lista.innerHTML = '<div class="empty-state"><p>🎯 No hay vehículos registrados</p></div>';
+            return;
+        }
+
+        const html = this.vehiculos.map(vehiculo => `
+            <div class="vehiculo ${vehiculo.optimo ? '' : 'problema'}">
+                <div class="vehiculo-header">
+                    <strong>${vehiculo.tipo} - ${vehiculo.numero}</strong>
+                    <span class="estado ${vehiculo.optimo ? 'optimo' : 'problema'}">
+                        ${vehiculo.optimo ? '✅ Óptimo' : '❌ Problemas'}
+                    </span>
+                </div>
+                <div class="vehiculo-detalles">
+                    <div>Agua: <strong>${vehiculo.agua}</strong></div>
+                    <div>Aceite: <strong>${vehiculo.aceite}</strong></div>
+                    <div>Luces: <strong>${vehiculo.luces}</strong></div>
+                </div>
+                ${vehiculo.novedades !== 'Sin novedades' ? 
+                    `<div class="novedades">Novedades: ${vehiculo.novedades}</div>` : ''}
+                <div class="fecha">${vehiculo.fecha}</div>
+            </div>
+        `).join('');
+
+        lista.innerHTML = html;
+    }
+
+    
+    mostrarResumen() {
+        const optimos = this.vehiculos.filter(v => v.optimo).length;
+        const problemas = this.vehiculos.length - optimos;
+        const urgentes = this.vehiculos.filter(v => 
+            !v.optimo && (v.agua === "Bajo" || v.aceite === "Bajo")
+        ).length;
+
+        let mensaje = `📊 RESUMEN DE FLOTA\n\n`;
+        mensaje += `Total vehículos: ${this.vehiculos.length}\n`;
+        mensaje += `✅ Óptimos: ${optimos}\n`;
+        mensaje += `❌ Con problemas: ${problemas}\n`;
+        mensaje += `🚨 Urgentes: ${urgentes}\n\n`;
+
+        if (urgentes > 0) {
+            mensaje += `Vehículos que necesitan atención inmediata:\n`;
+            this.vehiculos.filter(v => !v.optimo && (v.agua === "Bajo" || v.aceite === "Bajo"))
+                .forEach(v => {
+                    mensaje += `• ${v.tipo} ${v.numero}\n`;
+                });
+        }
+
+        alert(mensaje); 
+    }
+
+    limpiarDatos() {
+        if (confirm('¿Está seguro de eliminar TODOS los datos?')) {
+            this.vehiculos = [];
+            localStorage.removeItem('vehiculosBomberos');
+            this.actualizarVista();
+            this.mostrarMensaje('Todos los datos han sido eliminados', 'success');
+        }
+    }
+
+    mostrarMensaje(mensaje, tipo = 'info') {
+        
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `mensaje ${tipo}`;
+        mensajeDiv.textContent = mensaje;
+        
+        document.querySelector('.main-content').prepend(mensajeDiv);
+        
+        setTimeout(() => {
+            mensajeDiv.remove();
+        }, 5000);
     }
 }
 
-function agregarUnVehiculo() {
-    const numero = prompt("Ingrese el número de unidad (o escriba 'salir' para cancelar):");
-    
-    // Permitir salir
-    if (numero && normalizarTexto(numero) === "salir") {
-        return true; 
-    }
-    
-    // Opciones para tipo de vehículo
-    const tipo = prompt("Seleccione tipo de vehículo:\n1. Chata\n2. Autobomba\n3. Escalera Mecánica\n4. Ambulancia\n5. Lancha\n6. Autobomba de Abastecimiento\n7. Transporte de Personal\n\nIngrese el número correspondiente (o escriba 'salir' para cancelar):");
-    
-    // Permitir salir
-    if (tipo && normalizarTexto(tipo) === "salir") {
-        return true; 
-    }
-    
-    let tipoVehiculo = "";
-    switch(tipo) {
-        case "1":
-            tipoVehiculo = "Chata";
-            break;
-        case "2":
-            tipoVehiculo = "Autobomba";
-            break;
-        case "3":
-            tipoVehiculo = "Escalera Mecánica";
-            break;
-        case "4":
-            tipoVehiculo = "Ambulancia";
-            break;
-        case "5":
-            tipoVehiculo = "Lancha";
-            break;
-        case "6":
-            tipoVehiculo = "Autobomba de Abastecimiento";
-            break;
-        case "7":
-            tipoVehiculo = "Transporte de Personal";
-            break;
-        default:
-            tipoVehiculo = "No especificado";
-    }
-    
-    let agua = prompt("Nivel de agua del Motor (Óptimo/Bajo) (o escriba 'salir' para cancelar):");
-    // Permitir salir
-    if (agua && normalizarTexto(agua) === "salir") {
-        return true;
-    }
-    
-    let aceite = prompt("Nivel de aceite del Motor (Óptimo/Bajo) (o escriba 'salir' para cancelar):");
-    // Permitir salir
-    if (aceite && normalizarTexto(aceite) === "salir") {
-        return true;
-    }
-    
-    let luces = prompt("Estado de luces General (Funcionan/No funcionan) (o escriba 'salir' para cancelar):");
-    // Permitir salir
-    if (luces && normalizarTexto(luces) === "salir") {
-        return true;
-    }
-    
-    const novedades = prompt("Ingrese novedades (o escriba 'salir' para cancelar):");
-    // Permitir salir
-    if (novedades && normalizarTexto(novedades) === "salir") {
-        return true;
-    }
-    
-    // Acepta cualquier variación de escritura
-    agua = normalizarTexto(agua).includes("bajo") ? "Bajo" : "Óptimo";
-    aceite = normalizarTexto(aceite).includes("bajo") ? "Bajo" : "Óptimo";
-    luces = normalizarTexto(luces).includes("no") ? "No funcionan" : "Funcionan";
-    
-    const vehiculo = {
-        numero: numero,
-        tipo: tipoVehiculo,
-        agua: agua,
-        aceite: aceite,
-        luces: luces,
-        novedades: novedades,
-        condicionesOptimas: (agua === "Óptimo" && aceite === "Óptimo" && luces === "Funcionan")
-    };
-    
-    vehiculos.push(vehiculo);
-    
-    
-    console.log("=== VEHÍCULO AGREGADO ===");
-    console.log(`Unidad: ${vehiculo.numero} - ${vehiculo.tipo}`);
-    console.log(`Agua: ${vehiculo.agua}`);
-    console.log(`Aceite: ${vehiculo.aceite}`);
-    console.log(`Luces: ${vehiculo.luces}`);
-    console.log(`Novedades: ${vehiculo.novedades}`);
-    
-    if (vehiculo.condicionesOptimas) {
-        console.log("VEHÍCULO EN CONDICIONES ÓPTIMAS DE UTILIZAR");
-    } else {
-        console.log("VEHÍCULO REQUIERE MANTENIMIENTO");
-    }
-    console.log("----------------------");
-    
-    // mantenimiento urgente
-    if (agua === "Bajo" || aceite === "Bajo" || luces === "No funcionan") {
-        alert(`¡ATENCIÓN! Unidad ${numero} (${tipoVehiculo}) necesita mantenimiento URGENTE. Se recomienda NO UTILIZAR`);
-    }
-    
-    return false;
-}
 
-function verResumenEstado() {
-    console.log("=== RESUMEN DE ESTADO DE VEHICULOS ===");
-    console.log("");
-    
-    if (vehiculos.length === 0) {
-        console.log("No hay vehículos registrados.");
-        return;
-    }
-    
-    const optimos = vehiculos.filter(v => v.condicionesOptimas).length;
-    const conProblemas = vehiculos.length - optimos;
-    
-    console.log(`Total de vehículos: ${vehiculos.length}`);
-    console.log(`En condiciones óptimas: ${optimos}`);
-    console.log(`Requieren mantenimiento: ${conProblemas}`);
-    console.log("");
-    
-    // vehiculos sin funcionar
-    if (conProblemas > 0) {
-        console.log("=== VEHÍCULOS QUE REQUIEREN MANTENIMIENTO ===");
-        vehiculos.forEach(vehiculo => {
-            if (!vehiculo.condicionesOptimas) {
-                console.log(`• Unidad ${vehiculo.numero} - ${vehiculo.tipo}`);
-                
-                if (vehiculo.agua === "Bajo") console.log("  - Agua baja");
-                if (vehiculo.aceite === "Bajo") console.log("  - Aceite bajo");
-                if (vehiculo.luces === "No funcionan") console.log("  - Luces no funcionan");
-                
-                console.log(`  - Novedades: ${vehiculo.novedades}`);
-                console.log("");
-            }
-        });
-    }
-}
-
+document.addEventListener('DOMContentLoaded', () => {
+    new SistemaMantenimiento();
+});

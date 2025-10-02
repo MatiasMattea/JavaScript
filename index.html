@@ -1,25 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sistema de Mantenimiento - Bomberos</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+
 </head>
 <body>
-    <header>
-        <h1>CONTROL DE MANTENIMIENTO DE UNIDADES</h1>
-        <h2>Descripción del Proyecto</h2>
-        <div>
-        <p class="titulotexto">Gestión de Flota Vehicular</p>
-        <p>El sistema permite registrar y administrar diferentes tipos de vehículos utilizados por los bomberos. Se pueden agregar chatas, autobombas, escaleras mecánicas, ambulancias, lanchas, autobombas de abastecimiento y transporte de personal. Cada vehículo se identifica con un número de unidad único y lleva registro de novedades y observaciones específicas.</p>
-        </div>
-        <div>
-            <p class="titulotexto">Verificación Técnica</p>
-            <p>El sistema realiza controles técnicos completos de cada vehículo, incluyendo verificación de niveles de agua y aceite de motor (óptimo o bajo), estado de las luces general (funcional o no funcionan) y detección automática de vehículos que requieren mantenimiento urgente. Además, determina si cada unidad está en condiciones óptimas de uso operativo para una emergencia.</p>
-        </div>
+    <div class="container">
+        <header class="header">
+            <h1>CONTROL DE MANTENIMIENTO DE UNIDADES</h1>
+            <p class="subtitle">Vehículos de Bomberos</p>
+        </header>
 
-    </header>
+        <main class="main-content">
+            
+            <section class="form-section">
+                <h2>Registrar Vehículo</h2>
+                <form id="vehiculoForm" class="vehiculo-form">
+                    <div class="form-group">
+                        <label for="numeroUnidad">Número de Unidad:</label>
+                        <input type="text" id="numeroUnidad" required placeholder="Solo Numero del vehiculo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoVehiculo">Tipo de Vehículo:</label>
+                        <select id="tipoVehiculo" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="Camión">Camión</option>
+                            <option value="Ambulancia">Ambulancia</option>
+                            <option value="Escalera Mecánica">Escalera Mecánica</option>
+                            <option value="Autobomba">Autobomba</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nivelAgua">Nivel de Agua:</label>
+                            <select id="nivelAgua" required>
+                                <option value="Óptimo">✅ Óptimo</option>
+                                <option value="Bajo">❌ Bajo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nivelAceite">Nivel de Aceite:</label>
+                            <select id="nivelAceite" required>
+                                <option value="Óptimo">✅ Óptimo</option>
+                                <option value="Bajo">❌ Bajo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estadoLuces">Estado de Luces:</label>
+                            <select id="estadoLuces" required>
+                                <option value="Funcionan">✅ Funcionan</option>
+                                <option value="No funcionan">❌ No funcionan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="novedades">Novedades:</label>
+                        <textarea id="novedades" placeholder="Observaciones..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-primary">Agregar Vehículo</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Sección de Control -->
+            <section class="control-section">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>📊 Total</h3>
+                        <span id="totalVehiculos">0</span>
+                    </div>
+                    <div class="stat-card optimal">
+                        <h3>✅ Óptimos</h3>
+                        <span id="vehiculosOptimos">0</span>
+                    </div>
+                    <div class="stat-card problem">
+                        <h3>❌ Con Problemas</h3>
+                        <span id="vehiculosProblemas">0</span>
+                    </div>
+                </div>
+
+                <div class="control-buttons">
+                    <button id="btnVerResumen" class="btn btn-info">📋 Ver Resumen</button>
+                    <button id="btnLimpiarTodo" class="btn btn-danger">Limpiar Datos</button>
+                </div>
+            </section>
+
+            <!-- Sección de Resultados -->
+            <section class="results-section">
+                <h2>📋 Vehículos Registrados</h2>
+                <div id="listaVehiculos" class="vehiculos-list">
+                    <div class="empty-state">
+                        <p>🎯 No hay vehículos registrados</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/mantenimiento.js"></script>
 </body>
 </html>

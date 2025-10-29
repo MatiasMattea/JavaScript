@@ -4,25 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Mantenimiento - Bomberos</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <script src="script.js" defer></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>CONTROL DE MANTENIMIENTO DE UNIDADES</h1>
-            <p class="subtitle">Vehículos de Bomberos</p>
+            <h1>🚒 Sistema de Control de Mantenimiento</h1>
+            <p class="subtitle">Vehículos de Bomberos - Gestión Técnica</p>
         </header>
 
         <main class="main-content">
+           
+            <section class="simulation-section">
+                <button id="btnSimulacionCompleta" class="btn btn-simulation">
+                    🚀 Iniciar Simulación Completa
+                </button>
+            </section>
+
             
             <section class="form-section">
-                <h2>Registrar Vehículo</h2>
+                <h2>📝 Registrar Vehículo</h2>
                 <form id="vehiculoForm" class="vehiculo-form">
                     <div class="form-group">
                         <label for="numeroUnidad">Número de Unidad:</label>
-                        <input type="text" id="numeroUnidad" required placeholder="Solo Numero del vehiculo">
+                        <input type="text" id="numeroUnidad" required placeholder="Ej: B-001">
                     </div>
 
                     <div class="form-group">
@@ -33,6 +40,10 @@
                             <option value="Ambulancia">Ambulancia</option>
                             <option value="Escalera Mecánica">Escalera Mecánica</option>
                             <option value="Autobomba">Autobomba</option>
+                            <option value="Chata">Chata</option>
+                            <option value="Lancha">Lancha</option>
+                            <option value="Autobomba de Abastecimiento">Autobomba de Abastecimiento</option>
+                            <option value="Transporte de Personal">Transporte de Personal</option>
                         </select>
                     </div>
 
@@ -64,44 +75,45 @@
 
                     <div class="form-group">
                         <label for="novedades">Novedades:</label>
-                        <textarea id="novedades" placeholder="Observaciones..." rows="3"></textarea>
+                        <textarea id="novedades" placeholder="Observaciones técnicas..." rows="3"></textarea>
                     </div>
 
                     <div class="form-buttons">
-                        <button type="submit" class="btn btn-primary">Agregar Vehículo</button>
+                        <button type="submit" class="btn btn-primary">➕ Agregar Vehículo</button>
+                        <button type="button" id="btnLimpiarForm" class="btn btn-outline">🗑️ Limpiar Formulario</button>
                     </div>
                 </form>
             </section>
 
-            <!-- Sección de Control -->
+         
             <section class="control-section">
                 <div class="stats-cards">
                     <div class="stat-card">
-                        <h3>📊 Total</h3>
-                        <span id="totalVehiculos">0</span>
+                        <h3>📊 Total Vehículos</h3>
+                        <span id="totalVehiculos" class="stat-number">0</span>
                     </div>
                     <div class="stat-card optimal">
                         <h3>✅ Óptimos</h3>
-                        <span id="vehiculosOptimos">0</span>
+                        <span id="vehiculosOptimos" class="stat-number">0</span>
                     </div>
                     <div class="stat-card problem">
                         <h3>❌ Con Problemas</h3>
-                        <span id="vehiculosProblemas">0</span>
+                        <span id="vehiculosProblemas" class="stat-number">0</span>
                     </div>
                 </div>
 
                 <div class="control-buttons">
-                    <button id="btnVerResumen" class="btn btn-info">📋 Ver Resumen</button>
-                    <button id="btnLimpiarTodo" class="btn btn-danger">Limpiar Datos</button>
+                    <button id="btnVerResumen" class="btn btn-info">📋 Ver Resumen Completo</button>
+                    <button id="btnCargarEjemplo" class="btn btn-success">📥 Cargar Datos de Ejemplo</button>
+                    <button id="btnLimpiarTodo" class="btn btn-danger">🗑️ Limpiar Todos los Datos</button>
                 </div>
             </section>
 
-            <!-- Sección de Resultados -->
             <section class="results-section">
                 <h2>📋 Vehículos Registrados</h2>
                 <div id="listaVehiculos" class="vehiculos-list">
                     <div class="empty-state">
-                        <p>🎯 No hay vehículos registrados</p>
+                        <p>🎯 No hay vehículos registrados. Use el formulario para agregar el primero.</p>
                     </div>
                 </div>
             </section>

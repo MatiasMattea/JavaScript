@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -33,7 +34,6 @@ body {
     color: rgb(211, 47, 47);
     font-size: 2.5em;
     margin-bottom: 10px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .subtitle {
@@ -42,7 +42,20 @@ body {
     font-weight: 300;
 }
 
+/* Sección de Simulación */
+.simulation-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
 
+.btn-simulation {
+    background: linear-gradient(135deg, rgb(255, 152, 0), rgb(245, 124, 0));
+    color: rgb(255, 255, 255);
+    font-size: 1.1em;
+    padding: 15px 30px;
+}
+
+/* Secciones principales */
 .main-content {
     display: flex;
     flex-direction: column;
@@ -56,7 +69,7 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-
+/* Formulario */
 .vehiculo-form {
     display: flex;
     flex-direction: column;
@@ -103,7 +116,7 @@ textarea {
     font-family: inherit;
 }
 
-
+/* Botones */
 .form-buttons, .control-buttons {
     display: flex;
     gap: 15px;
@@ -147,6 +160,17 @@ textarea {
     box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
 }
 
+.btn-success {
+    background: linear-gradient(135deg, rgb(76, 175, 80), rgb(56, 142, 60));
+    color: rgb(255, 255, 255);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
 .btn-danger {
     background: linear-gradient(135deg, rgb(244, 67, 54), rgb(211, 47, 47));
     color: rgb(255, 255, 255);
@@ -156,6 +180,17 @@ textarea {
 .btn-danger:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid rgb(225, 229, 233);
+    color: rgb(51, 51, 51);
+}
+
+.btn-outline:hover {
+    border-color: rgb(211, 47, 47);
+    color: rgb(211, 47, 47);
 }
 
 /* Tarjetas de estadísticas */
@@ -235,7 +270,7 @@ textarea {
 
 .vehiculo:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
 
 .vehiculo.problema {
@@ -254,10 +289,10 @@ textarea {
 
 .vehiculo-header strong {
     font-size: 1.3em;
-    color: #333;
+    color: rgb(51, 51, 51);
 }
 
-.estado {
+.estado-vehiculo {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9em;
@@ -265,13 +300,14 @@ textarea {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-.estado.optimo {
+
+.estado-optimo {
     background: rgb(76, 175, 80);
     color: rgb(255, 255, 255);
     box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
-.estado.problema {
+.estado-problema {
     background: rgb(244, 67, 54);
     color: rgb(255, 255, 255);
     box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
@@ -311,39 +347,27 @@ textarea {
     margin-top: 10px;
 }
 
-/* Mensajes */
-.mensaje {
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin: 15px 0;
-    font-weight: 500;
-    animation: slideIn 0.5s ease;
-    border-left: 4px solid;
+.acciones-vehiculo {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgb(238, 238, 238);
 }
 
-.mensaje.success {
-    background: rgb(232, 245, 232);
-    border-left-color: rgb(76, 175, 80);
-    color: rgb(46, 125, 50);
+.btn-sm {
+    padding: 8px 15px;
+    font-size: 14px;
 }
 
-.mensaje.error {
-    background: rgb(255, 235, 238);
-    border-left-color: rgb(244, 67, 54);
-    color: rgb(198, 40, 40);
+.btn-edit {
+    background: linear-gradient(135deg, rgb(33, 150, 243), rgb(25, 118, 210));
+    color: rgb(255, 255, 255);
 }
 
-.mensaje.urgente {
-    background: rgb(255, 243, 224);
-    border-left-color: rgb(255, 152, 0);
-    color: rgb(239, 108, 0);
-    font-weight: 600;
-}
-
-.mensaje.info {
-    background: rgb(227, 242, 253);
-    border-left-color: rgb(33, 150, 243);
-    color: rgb(21, 101, 192);
+.btn-delete {
+    background: linear-gradient(135deg, rgb(244, 67, 54), rgb(211, 47, 47));
+    color: rgb(255, 255, 255);
 }
 
 /* Animaciones */
@@ -355,17 +379,6 @@ textarea {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
     }
 }
 
@@ -412,6 +425,10 @@ textarea {
     .vehiculo-detalles {
         grid-template-columns: 1fr;
     }
+    
+    .acciones-vehiculo {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
@@ -430,28 +447,4 @@ textarea {
     .stat-number {
         font-size: 2em;
     }
-}
-
-/* Efectos de carga */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-/* Scroll suave */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Mejoras de accesibilidad */
-.btn:focus, input:focus, select:focus, textarea:focus {
-    outline: 2px solid rgb(211, 47, 47);
-    outline-offset: 2px;
-}
-
-/* Estados de hover mejorados */
-.vehiculo-detalles div:hover {
-    background: rgb(233, 236, 239);
-    transform: translateX(5px);
-    transition: all 0.3s ease;
 }
